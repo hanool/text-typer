@@ -1,0 +1,42 @@
+* {
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Kosugi Maru", "Nunito", sans-serif;
+  line-height: 1.3;
+}
+
+.container {
+  width: 12rem;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+}
+
+.test-text {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+
+#test-input {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem !important;
+  border: none;
+  border-bottom: 5px solid bisque;
+  outline: none;
+  resize: none;
+}
+
+#test-input:focus {
+  border-bottom: 5px solid #ffbb6a;
+}
+
+@media screen and (min-width: 480px) {
+  .container {
+    width: 50rem;
+  }
+}
