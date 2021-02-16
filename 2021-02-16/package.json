@@ -1,0 +1,22 @@
+{
+  "name": "text-typer",
+  "version": "1.0.0",
+  "description": "text typing web component",
+  "main": "App.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "jest": {
+    "testEnvironment": "@happy-dom/jest-environment"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.12.16",
+    "@babel/preset-env": "^7.12.16",
+    "@happy-dom/jest-environment": "^2.6.3",
+    "babel-jest": "^26.6.3",
+    "happy-dom": "^2.6.3",
+    "jest": "^26.6.3"
+  }
+}

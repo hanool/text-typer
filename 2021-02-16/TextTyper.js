@@ -1,5 +1,3 @@
-//const template = document.createElement("template");
-
 const template = `
   <style>
     #typer-text {
@@ -57,6 +55,10 @@ class TextTyper extends HTMLElement {
     typerInput.addEventListener("keydown", handleMaxLength);
     typerInput.addEventListener("keyup", handleMaxLength);
   }
+
+  sum(a, b) {
+    return a + b;
+  }
 }
 
 const handleMaxLength = (event) => {
@@ -74,9 +76,4 @@ const handleMaxLength = (event) => {
   }
 };
 
-window.customElements.define("text-typer", TextTyper);
-
-const text = "テスト用の日本語です。";
-const newTyper = document.createElement("text-typer");
-newTyper.setAttribute("data-text", text);
-document.querySelector(".container").appendChild(newTyper);
+export default TextTyper;
