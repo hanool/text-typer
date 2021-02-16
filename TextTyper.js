@@ -32,48 +32,38 @@ class TextTyper extends HTMLElement {
 
     this.root = this.attachShadow({ mode: "open" });
     this.root.innerHTML = template;
+
+    this.text;
+    this.input;
+
+    this.check = this.check.bind(this);
   }
 
   connectedCallback() {
+    this.text = this.getAttribute("data-text");
+
     const typerText = this.root.querySelector("#typer-text");
-    typerText.innerText = this.getAttribute("data-text");
+    typerText.innerHTML = this.text;
     const typerTextLength = typerText.innerText.length;
 
     // Adjust height of input area to be same as typer-text
     const typerTextHeight = typerText.clientHeight;
+    const typerTextStyle = window.getComputedStyle(typerText, null);
     const typerTextPadding = Number(
-      window
-        .getComputedStyle(typerText, null)
-        .getPropertyValue("padding")
-        .match(/\d+/)[0]
+      typerTextStyle.getPropertyValue("padding").match(/\d+/)[0]
     );
 
     const typerInput = this.root.querySelector("#typer-input");
     typerInput.setAttribute("data-max-length", typerTextLength);
     typerInput.style.height = `${typerTextHeight - 2 * typerTextPadding}px`;
 
-    typerInput.addEventListener("keydown", handleMaxLength);
-    typerInput.addEventListener("keyup", handleMaxLength);
+    typerInput.addEventListener("keydown", this.check);
   }
 
-  sum(a, b) {
-    return a + b;
+  check(event) {
+    const input = this.root.querySelector("#typer-input").innerText;
+    console.log(input);
   }
 }
-
-const handleMaxLength = (event) => {
-  const currentText = event.target.innerText;
-  const currentLength = Number(currentText.length);
-  const maxLength = Number(event.target.getAttribute("data-max-length"));
-  if (
-    currentLength > maxLength &&
-    event.code !== "Delete" &&
-    event.code !== "Backspace"
-  ) {
-    event.preventDefault();
-    event.stopPropagation();
-    return false;
-  }
-};
 
 export default TextTyper;

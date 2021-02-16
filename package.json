@@ -4,7 +4,7 @@
   "description": "text typing web component",
   "main": "App.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest --env=@happy-dom/jest-environment"
   },
   "jest": {
     "testEnvironment": "@happy-dom/jest-environment"
