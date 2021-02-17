@@ -26,6 +26,12 @@ const template = `
   <div id="typer-input" contenteditable></div>
 `;
 
+export const checkResult = {
+  NONE: "0",
+  SAME: "1",
+  DIFF: "2",
+};
+
 class TextTyper extends HTMLElement {
   constructor() {
     super();
@@ -36,7 +42,7 @@ class TextTyper extends HTMLElement {
     this.text;
     this.input;
 
-    this.check = this.check.bind(this);
+    this.getStringComparison = this.getStringComparison.bind(this);
   }
 
   connectedCallback() {
@@ -60,9 +66,29 @@ class TextTyper extends HTMLElement {
     typerInput.addEventListener("keydown", this.check);
   }
 
-  check(event) {
-    const input = this.root.querySelector("#typer-input").innerText;
-    console.log(input);
+  /**
+   * Compares 2 String origin and target.
+   * @param {*} origin original String to compare
+   * @param {*} target   target String to be campared by original String
+   * @returns an Array of checkResult which has size of origin String.length
+   * @see checkResult
+   */
+  getStringComparison(origin, target) {
+    if (origin.length === 0) return [];
+
+    let comparisonResult = new Array();
+    for (let i = 0; i < origin.length; i++) {
+      if (target.length >= i + 1) {
+        if (target[i] === origin[i]) {
+          comparisonResult.push(checkResult.SAME);
+        } else {
+          comparisonResult.push(checkResult.DIFF);
+        }
+      } else {
+        comparisonResult.push(checkResult.NONE);
+      }
+    }
+    return comparisonResult;
   }
 }
 

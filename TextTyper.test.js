@@ -1,19 +1,29 @@
-import { Window } from "happy-dom";
+import { checkResult } from "./TextTyper";
 import TextTyper from "./TextTyper.js";
 
-const window = new Window();
-const document = window.document;
-document.body.innerHTML = '<div class="container"></div>';
+const typer = new TextTyper();
 
-window.customElements.define("text-typer", TextTyper);
-
-const text = `テスト<span style="color: red;">用</span>の日本語です。`;
-const typer = document.createElement("TEXT-TYPER");
-typer.setAttribute("data-text", text);
-document.querySelector(".container").appendChild(typer);
-
-test("adds 1 + 2 to equal 3", () => {
-  const event = new KeyboardEvent("keydown", { code: "KeyA" });
-  document.querySelector("#typer-input").dispatchEvent(event);
-  expect(typer.check(event)).toBe("a");
+/**
+ * Test Strategy for getStringComparison(origin, target)
+ *    - partitions of input:
+ *      1. origin.len = 0, 1, more
+ *      2. target.len = 0, 1, more
+ *      3. origin.len >, =, < than target.len
+ *      4. when target is completely same with origin
+ *      5. when target is partially same with origin
+ *      6. when target is completely different from origin
+ *
+ *    - test cases
+ *      1. (origin.len = 0, target.len = 0) => []
+ *      2. (origin.len = 1, target.len = more) and when target is completely same with origin => [checkResult.SAME]
+ */
+describe("getStringComparisonTest", () => {
+  test("test case (origin.len, target.len) = (0, 0)", () => {
+    const result = typer.getStringComparison("", "");
+    expect(result.length).toBe(0);
+  });
+  test(`test case (origin.len, target.len) = (1, more) and when target is completely same with origin`, () => {
+    const result = typer.getStringComparison("a", "abbb");
+    expect(result).toMatchObject([checkResult.SAME]);
+  });
 });
