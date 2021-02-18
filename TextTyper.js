@@ -41,8 +41,6 @@ class TextTyper extends HTMLElement {
 
     this.text;
     this.input;
-
-    this.getStringComparison = this.getStringComparison.bind(this);
   }
 
   connectedCallback() {
@@ -68,12 +66,12 @@ class TextTyper extends HTMLElement {
 
   /**
    * Compares 2 String origin and target.
-   * @param {*} origin original String to compare
-   * @param {*} target   target String to be campared by original String
+   * @param string origin original String to compare
+   * @param string target   target String to be campared by original String
    * @returns an Array of checkResult which has size of origin String.length
    * @see checkResult
    */
-  getStringComparison(origin, target) {
+  getTextInputComparison(origin, target) {
     if (origin.length === 0) return [];
 
     let comparisonResult = new Array();
@@ -89,6 +87,31 @@ class TextTyper extends HTMLElement {
       }
     }
     return comparisonResult;
+  }
+
+  /**
+   * Create styled typer text based on input comparison.
+   * when text.char == input.char : green, != : red, none: plain.
+   * @param {*} plainText plain text to be styled
+   * @param {*} textInputComparison comparison result
+   */
+  getStyledTyperText(plainText, textInputComparison) {
+    if (plainText.length !== textInputComparison.length) {
+      throw new Error("ComparisonLengthUnmatch");
+    }
+    let styledText = "";
+    for (let i = 0; i < plainText.length; i++) {
+      let styledChar = "";
+      if (textInputComparison[i] === checkResult.SAME) {
+        styledChar = `<span style="color: green;">${plainText[i]}</span>`;
+      } else if (textInputComparison[i] === checkResult.DIFF) {
+        styledChar = `<span style="color: red;">${plainText[i]}</span>`;
+      } else if (textInputComparison[i] === checkResult.NONE) {
+        styledChar = `${plainText[i]}`;
+      }
+      styledText = styledText + styledChar;
+    }
+    return styledText;
   }
 }
 
