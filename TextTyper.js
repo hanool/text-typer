@@ -41,6 +41,8 @@ class TextTyper extends HTMLElement {
 
     this.text;
     this.input;
+
+    this.keydownHandler = this.keydownHandler.bind(this);
   }
 
   connectedCallback() {
@@ -61,7 +63,18 @@ class TextTyper extends HTMLElement {
     typerInput.setAttribute("data-max-length", typerTextLength);
     typerInput.style.height = `${typerTextHeight - 2 * typerTextPadding}px`;
 
-    typerInput.addEventListener("keydown", this.check);
+    typerInput.addEventListener("keydown", this.keydownHandler);
+  }
+
+  keydownHandler(event) {
+    const typerText = this.root.querySelector("#typer-text");
+    const typerInput = this.root.querySelector("#typer-input");
+    const comparison = this.getTextInputComparison(
+      this.text,
+      typerInput.innerText
+    );
+    const newStyledText = this.getStyledTyperText(this.text, comparison);
+    typerText.innerHTML = newStyledText;
   }
 
   /**

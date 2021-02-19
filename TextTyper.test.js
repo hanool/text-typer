@@ -108,7 +108,7 @@ describe("getStyledTyperTextTest", () => {
       checkResult.NONE,
     ]);
     expect(result).toBe(
-      "<span style='color: green;'>a</span><span style='color: red;'>bc</span><span style='color: green;'>de</span>f"
+      `<span style="color: green;">a</span><span style="color: red;">b</span><span style="color: red;">c</span><span style="color: green;">d</span><span style="color: green;">e</span>f`
     );
   });
 });
