@@ -1,13 +1,13 @@
 const template = `
   <style>
     #typer-text {
-      max-width: 100%;
+      width: 100%;
       padding: 0.5rem;
       font-size: 1rem;
     }
     
     #typer-input {
-      max-width: 100%;
+      width: 100%;
       padding: 0.5rem;
       font-size: 1rem;
       border: none;
@@ -33,6 +33,10 @@ export const checkResult = {
 };
 
 class TextTyper extends HTMLElement {
+  static get observedAttributes() {
+    return ["data-text"];
+  }
+
   constructor() {
     super();
 
@@ -41,40 +45,71 @@ class TextTyper extends HTMLElement {
 
     this.text;
     this.input;
+    this.composing;
 
-    this.keydownHandler = this.keydownHandler.bind(this);
+    this.initStyle = this.initStyle.bind(this);
+    this.keyupHandler = this.keyupHandler.bind(this);
   }
 
   connectedCallback() {
-    this.text = this.getAttribute("data-text");
+    this.initStyle();
 
+    const typerInput = this.root.querySelector("#typer-input");
+    typerInput.addEventListener("keyup", this.keyupHandler);
+    typerInput.addEventListener("compositionstart", () => {
+      this.composing = true;
+    });
+    typerInput.addEventListener("compositionend", () => {
+      this.composing = false;
+    });
+  }
+
+  attributeChangedCallback() {
+    this.initStyle();
+  }
+
+  initStyle() {
     const typerText = this.root.querySelector("#typer-text");
+    const typerInput = this.root.querySelector("#typer-input");
+
+    // Show initial text
+    this.text = this.getAttribute("data-text");
     typerText.innerHTML = this.text;
-    const typerTextLength = typerText.innerText.length;
 
     // Adjust height of input area to be same as typer-text
     const typerTextHeight = typerText.clientHeight;
     const typerTextStyle = window.getComputedStyle(typerText, null);
     const typerTextPadding = Number(
-      typerTextStyle.getPropertyValue("padding").match(/\d+/)[0]
+      typerTextStyle.getPropertyValue("Padding").match(/\d+/)[0]
     );
-
-    const typerInput = this.root.querySelector("#typer-input");
-    typerInput.setAttribute("data-max-length", typerTextLength);
     typerInput.style.height = `${typerTextHeight - 2 * typerTextPadding}px`;
 
-    typerInput.addEventListener("keydown", this.keydownHandler);
+    // Set input area max-width (not to overflow)
+    typerInput.style.maxWidth = `${this.clientWidth}px`;
+
+    // set input text empty, cursor to start position
+    typerInput.innerText = "";
+    typerInput.selectionStart;
   }
 
-  keydownHandler(event) {
-    const typerText = this.root.querySelector("#typer-text");
-    const typerInput = this.root.querySelector("#typer-input");
-    const comparison = this.getTextInputComparison(
-      this.text,
-      typerInput.innerText
-    );
+  keyupHandler(event) {
+    const inputText = this.root.querySelector("#typer-input").innerText;
+
+    // check if typing finished
+    if (this.text.length + 1 <= inputText.length) {
+      if (!this.composing) {
+        var finishEvent = new CustomEvent("typingFinished", {
+          msg: "typing finished",
+        });
+        this.dispatchEvent(finishEvent);
+        return false;
+      }
+    }
+
+    // style text
+    const comparison = this.getTextInputComparison(this.text, inputText);
     const newStyledText = this.getStyledTyperText(this.text, comparison);
-    typerText.innerHTML = newStyledText;
+    this.root.querySelector("#typer-text").innerHTML = newStyledText;
   }
 
   /**
