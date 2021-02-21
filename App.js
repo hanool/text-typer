@@ -2,22 +2,59 @@ import TextTyper from "./TextTyper.js";
 
 window.customElements.define("text-typer", TextTyper);
 
-const text = `テスト用の日本語です。`;
 const newTyper = document.createElement("text-typer");
 document.querySelector(".container").appendChild(newTyper);
-newTyper.setAttribute("data-text", text);
 
-const textList = [
-  `テスト用の日本語です。`,
-  `한국어 테스트용 데이터 입니다.`,
-  `Slow and steady wins the game.`,
-  `「あの選手ちょっと面白いな」と、野球を知らない人に感じてもらうのも目標の1つでした`,
-  `どんなに苦しい時でも諦めようとする自分がいなかった`,
-  `センター前ヒットなら、いつでも打てる`,
-];
-let textIndex = 1;
+const maxDataPerFetch = 100;
+const maxLength = 60;
+
+let quotes;
+let quoteIndex = 0;
+getData(maxDataPerFetch, maxLength)
+  .then((res) => res.json())
+  .then((jsonData) => {
+    quotes = shuffle(jsonData.results);
+    newTyper.setAttribute("data-text", quotes[quoteIndex].content);
+  });
 
 newTyper.addEventListener("typingFinished", () => {
-  newTyper.setAttribute("data-text", textList[textIndex]);
-  textIndex++;
+  if (quoteIndex + 1 >= maxDataPerFetch) {
+    quoteIndex = 0;
+    getData(maxDataPerFetch, maxLength)
+      .then((res) => res.json())
+      .then((jsonData) => {
+        quotes = shuffle(jsonData.results);
+        newTyper.setAttribute("data-text", quotes[quoteIndex].content);
+      });
+    newTyper.setAttribute("data-text", quotes[quoteIndex].content);
+  } else {
+    quoteIndex++;
+    newTyper.setAttribute("data-text", quotes[quoteIndex].content);
+  }
 });
+
+function getData(maxDataPerFetch, maxLength) {
+  return fetch(
+    `https://api.quotable.io/quotes?limit=${maxDataPerFetch}&maxLength=${maxLength}`
+  );
+}
+
+function shuffle(array) {
+  var currentIndex = array.length,
+    temporaryValue,
+    randomIndex;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+
+  return array;
+}
