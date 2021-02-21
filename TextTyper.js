@@ -1,5 +1,17 @@
 const template = `
   <style>
+    * {
+      box-sizing: border-box;
+    }
+    :host {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
     #typer-text {
       width: 100%;
       padding: 0.5rem;
@@ -13,17 +25,14 @@ const template = `
       border: none;
       border-bottom: 5px solid bisque;
       outline: none;
-      resize: none;
-      margin-bottom: 1rem;
     }
     
     #typer-input:focus {
       border-bottom: 5px solid #ffbb6a;
     }
   </style>
-
-  <div id="typer-text"></div>
-  <div id="typer-input" contenteditable></div>
+    <div id="typer-text"></div>
+    <div id="typer-input" contenteditable></div>
 `;
 
 export const checkResult = {
@@ -82,7 +91,7 @@ class TextTyper extends HTMLElement {
     const typerTextPadding = Number(
       typerTextStyle.getPropertyValue("Padding").match(/\d+/)[0]
     );
-    typerInput.style.height = `${typerTextHeight - 2 * typerTextPadding}px`;
+    typerInput.style.height = `${typerTextHeight}px`;
 
     // Set input area max-width (not to overflow)
     typerInput.style.maxWidth = `${this.clientWidth}px`;
